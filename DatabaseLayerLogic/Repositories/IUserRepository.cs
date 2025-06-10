@@ -17,6 +17,7 @@ namespace DatabaseLayerLogic.Repositories
         Task UpdateAsync(User user);
         Task DeleteAsync(int id);
 
+        Task<List<User>> GetByUsernameAndPassword(string username, string password); 
 
     }
 }

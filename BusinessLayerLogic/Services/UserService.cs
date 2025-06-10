@@ -31,5 +31,8 @@ namespace BusinessLayerLogic.Services
 
         public async Task DeleteUserAsync(int id) =>
             await _userRepository.DeleteAsync(id);
+
+        public async Task<List<User>> GetUserByUsernameAndPassword(string username, string password) =>
+            await _userRepository.GetByUsernameAndPassword(username, password); 
     }
 }

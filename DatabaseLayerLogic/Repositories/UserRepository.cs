@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -41,6 +42,14 @@ namespace DatabaseLayerLogic.Repositories
         {
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<User>> GetByUsernameAndPassword(string username, string password)
+        {
+            var user =await _context.Users
+                        .Where(u => u.UserName == username && u.Password == password)
+                        .ToListAsync();
+            return user; 
         }
     }
 }
