@@ -4,33 +4,62 @@ using Microsoft.AspNetCore.Mvc;
 using PresentationLayer.ViewModels;
 using PresentationLayer.Commons;
 using System.Globalization;
+using BusinessLayerLogic.Services;
+using STEMSeperation.Helpers;
+using Azure.Identity;
 
 namespace PresentationLayer.Controllers
 {
     public class LoginAndRegisterController : ControllerBase
     {
-        private readonly UserManager<User> userManager;
-        public LoginAndRegisterController(UserManager<User> userManager) 
-        { 
-            this.userManager = userManager;
+        private readonly UserService _userService;
+        private readonly IConfiguration _config;
+        public LoginAndRegisterController(UserService userService, IConfiguration config)
+        {
+            this._userService = userService;
+            this._config=config; 
         }
 
         [HttpPost]
-        [Route("Register")]
-        public async Task<ActionResult<User>> Register([FromBody]RegisterAndLoginVM registerAndLoginVM)
+        [Route("SignUp")]
+        public async Task<ActionResult<User>> Register([FromBody] RegisterAndLoginVM registerAndLoginVM)
         {
-            var IsExist = await userManager.FindByNameAsync(registerAndLoginVM.UserName);
-            if (IsExist != null)
+            var IsExist = await _userService.GetUserByUsernameAndPassword(registerAndLoginVM.UserName,registerAndLoginVM.Password);
+            if (IsExist.Count!=0)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
             User user = new User
             {
                 UserName = registerAndLoginVM.UserName,
-                Password = registerAndLoginVM.Password
+                Password = registerAndLoginVM.Password,
+                UserCreatedOn = DateTime.Now
             };
-            var result = await userManager.CreateAsync(user, registerAndLoginVM.Password);
-            if (!result.Succeeded)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
-            return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+            try
+            {
+                await _userService.CreateUserAsync(user);
+                return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Internal Server Error" });
+            }
+            
+        }
+
+        [HttpPost]
+        [Route("SignIn")]
+        public async Task<ActionResult<User>> SignIn([FromBody] RegisterAndLoginVM signInBody)
+        {
+            string token = ""; 
+            var user = await _userService.GetUserByUsernameAndPassword(signInBody.UserName,signInBody.Password);
+            if (user.Count==0)
+            {
+                return NotFound();
+            }
+            else
+            {
+                token = JwtTokenGenerator.GenerateJwtToken(user[0].UserName,_config); 
+                return Ok(new{username=user[0].UserName,JwtToken=token }); 
+            }
         }
     }
 }
