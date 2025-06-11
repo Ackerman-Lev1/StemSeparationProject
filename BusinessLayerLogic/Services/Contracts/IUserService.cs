@@ -14,5 +14,6 @@ namespace BusinessLayerLogic.Services.Contracts
         Task CreateUserAsync(User user);
         Task UpdateUserAsync(User user);
         Task DeleteUserAsync(int id);
+        Task<List<User>> GetUserByUsernameAndPassword(string username, string password); 
     }
 }
