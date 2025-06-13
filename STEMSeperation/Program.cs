@@ -3,6 +3,7 @@ using BusinessLayerLogic.Services;
 using BusinessLayerLogic.Services.Contracts;
 using DatabaseLayerLogic.Models;
 using DatabaseLayerLogic.Repositories;
+using DatabaseLayerLogic.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -16,6 +17,7 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectio
 ));
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
 // Add services to the container.
 

@@ -23,8 +23,8 @@ namespace BusinessLayerLogic.Services
         public async Task<User?> GetUserByIdAsync(int id) =>
             await _userRepository.GetByIdAsync(id);
 
-        public async Task CreateUserAsync(User user) =>
-            await _userRepository.InsertAsync(user);
+        public async Task CreateUserAsync(string userName, string passwordHash, string saltValue, DateTime? dateTime) =>
+            await _userRepository.InsertAsync(userName,passwordHash,saltValue,dateTime);
 
         public async Task UpdateUserAsync(User user) =>
             await _userRepository.UpdateAsync(user);
@@ -32,7 +32,7 @@ namespace BusinessLayerLogic.Services
         public async Task DeleteUserAsync(int id) =>
             await _userRepository.DeleteAsync(id);
 
-        public async Task<List<User>> GetUserByUsernameAndPassword(string username, string password) =>
-            await _userRepository.GetByUsernameAndPassword(username, password); 
+        public async Task<List<User>> GetUserByUsername(string username) =>
+            await _userRepository.GetByUsername(username); 
     }
 }

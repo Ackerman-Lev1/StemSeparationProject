@@ -19,22 +19,25 @@ public partial class StemseperationContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-1CFLAAS\\SQLEXPRESS;Database=STEMSeperation;Trusted_Connection=True;Encrypt=False;");
+        => optionsBuilder.UseSqlServer("Server=DESKTOP-1CFLAAS\\SQLEXPRESS;Database=STEMSeperation;Encrypt=False;TrustServerCertificate=True;Trusted_Connection=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Pkuser).HasName("PK__Users__593F5E2EF05FA1BF");
+            entity.HasKey(e => e.Pkuser).HasName("PK__Users__1EAE3C7906B3C1DB");
 
-            entity.Property(e => e.Pkuser).HasColumnName("PKUser");
             entity.Property(e => e.LastLogIn).HasColumnType("datetime");
-            entity.Property(e => e.Password)
-                .HasMaxLength(50)
+            entity.Property(e => e.LastPasswordChange).HasColumnType("datetime");
+            entity.Property(e => e.PasswordHash)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.SaltValue)
+                .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.UserCreatedOn).HasColumnType("datetime");
             entity.Property(e => e.UserName)
-                .HasMaxLength(50)
+                .HasMaxLength(100)
                 .IsUnicode(false);
         });
 

@@ -34,7 +34,7 @@ namespace STEMSeperation.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(User user)
         {
-            await _userService.CreateUserAsync(user);
+            //await _userService.CreateUserAsync(user);
             return CreatedAtAction(nameof(GetById), new { id = user.Pkuser }, user);
         }
 

@@ -32,8 +32,15 @@ namespace DatabaseLayerLogic.Repositories
         public async Task<IEnumerable<User>> GetUsersAsync() =>
         await _context.Users.ToListAsync();
 
-        public async Task InsertAsync(User user)
+        public async Task InsertAsync(string userName, string passwordHash, string saltValue, DateTime? dateTime)
         {
+            var user = new User
+            {
+                UserName = userName,
+                PasswordHash = passwordHash,
+                SaltValue = saltValue,
+                UserCreatedOn = dateTime
+            };
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
         }
@@ -44,10 +51,10 @@ namespace DatabaseLayerLogic.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<User>> GetByUsernameAndPassword(string username, string password)
+        public async Task<List<User>> GetByUsername(string username)
         {
             var user =await _context.Users
-                        .Where(u => u.UserName == username && u.Password == password)
+                        .Where(u => u.UserName == username)
                         .ToListAsync();
             return user; 
         }

@@ -11,9 +11,9 @@ namespace BusinessLayerLogic.Services.Contracts
     {
         Task<IEnumerable<User>> GetAllUsersAsync();
         Task<User?> GetUserByIdAsync(int id);
-        Task CreateUserAsync(User user);
+        Task CreateUserAsync(string userName, string passwordHash,string saltValue, DateTime? dateTime);
         Task UpdateUserAsync(User user);
         Task DeleteUserAsync(int id);
-        Task<List<User>> GetUserByUsernameAndPassword(string username, string password); 
+        Task<List<User>> GetUserByUsername(string username); 
     }
 }

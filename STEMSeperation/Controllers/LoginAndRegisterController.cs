@@ -7,35 +7,46 @@ using System.Globalization;
 using BusinessLayerLogic.Services;
 using STEMSeperation.Helpers;
 using Azure.Identity;
+using BusinessLayerLogic.Services.Contracts;
+using DatabaseLayerLogic.Security;
+using Azure.Core;
+
 
 namespace PresentationLayer.Controllers
 {
     public class LoginAndRegisterController : ControllerBase
     {
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
+        private readonly IPasswordHasher _passwordHasher;
         private readonly IConfiguration _config;
-        public LoginAndRegisterController(UserService userService, IConfiguration config)
+        public LoginAndRegisterController(IUserService userService, IPasswordHasher passwordHasher, IConfiguration config)
         {
-            this._userService = userService;
-            this._config=config; 
+            _userService = userService;
+            _passwordHasher = passwordHasher;
+            _config = config; 
         }
 
         [HttpPost]
         [Route("SignUp")]
         public async Task<ActionResult<User>> Register([FromBody] RegisterAndLoginVM registerAndLoginVM)
         {
-            var IsExist = await _userService.GetUserByUsernameAndPassword(registerAndLoginVM.UserName,registerAndLoginVM.Password);
+            var IsExist = await _userService.GetUserByUsername(registerAndLoginVM.UserName);
             if (IsExist.Count!=0)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+
+            var salt = _passwordHasher.GenerateSalt();
+            var hash = _passwordHasher.GeneratePasswordHash(registerAndLoginVM.Password, salt);
+
             User user = new User
             {
                 UserName = registerAndLoginVM.UserName,
-                Password = registerAndLoginVM.Password,
+                PasswordHash = hash,
+                SaltValue = salt,
                 UserCreatedOn = DateTime.Now
             };
             try
             {
-                await _userService.CreateUserAsync(user);
+                await _userService.CreateUserAsync(user.UserName,user.PasswordHash,user.SaltValue,user.UserCreatedOn);
                 return Ok(new Response { Status = "Success", Message = "User created successfully!" });
             }
             catch
@@ -50,7 +61,7 @@ namespace PresentationLayer.Controllers
         public async Task<ActionResult<User>> SignIn([FromBody] RegisterAndLoginVM signInBody)
         {
             string token = ""; 
-            var user = await _userService.GetUserByUsernameAndPassword(signInBody.UserName,signInBody.Password);
+            var user = await _userService.GetUserByUsername(signInBody.UserName);
             if (user.Count==0)
             {
                 return NotFound();
