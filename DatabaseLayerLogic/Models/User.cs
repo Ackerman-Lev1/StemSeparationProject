@@ -1,4 +1,4 @@
-﻿//using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace DatabaseLayerLogic.Models;
@@ -9,9 +9,13 @@ public partial class User
 
     public string UserName { get; set; } = null!;
 
-    public string Password { get; set; } = null!;
+    public string PasswordHash { get; set; } = null!;
 
-    public DateTime UserCreatedOn { get; set; }
+    public string SaltValue { get; set; } = null!;
+
+    public DateTime? UserCreatedOn { get; set; }
 
     public DateTime? LastLogIn { get; set; }
+
+    public DateTime? LastPasswordChange { get; set; }
 }
