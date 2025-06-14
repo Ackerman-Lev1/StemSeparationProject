@@ -1,4 +1,5 @@
 ﻿using DatabaseLayerLogic.Models;
+using BusinessLayerLogic.ExternalProcesses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PresentationLayer.ViewModels;
@@ -19,11 +20,13 @@ namespace PresentationLayer.Controllers
         private readonly IUserService _userService;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IConfiguration _config;
-        public LoginAndRegisterController(IUserService userService, IPasswordHasher passwordHasher, IConfiguration config)
+        private readonly IConsoleAppRunner _consoleAppRunner;
+        public LoginAndRegisterController(IUserService userService, IPasswordHasher passwordHasher, IConfiguration config, IConsoleAppRunner consoleAppRunner)
         {
             _userService = userService;
             _passwordHasher = passwordHasher;
             _config = config; 
+            _consoleAppRunner = consoleAppRunner;
         }
 
         [HttpPost]
@@ -72,5 +75,14 @@ namespace PresentationLayer.Controllers
                 return Ok(new{username=user[0].UserName,JwtToken=token }); 
             }
         }
+
+        [HttpPost]
+        [Route("CommandCalling")]
+        public string spleetercall(int noOfStems)
+        {
+            var output = _consoleAppRunner.RunSpleeter(noOfStems);
+            return output;
+        }
+
     }
 }
