@@ -1,4 +1,5 @@
 using System.Text;
+using BusinessLayerLogic.ExternalProcesses;
 using BusinessLayerLogic.Services;
 using BusinessLayerLogic.Services.Contracts;
 using DatabaseLayerLogic.Models;
@@ -18,7 +19,7 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectio
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
-
+builder.Services.AddScoped<IConsoleAppRunner, ConsoleAppRunner>();
 // Add services to the container.
 
 builder.Services.AddControllers();
