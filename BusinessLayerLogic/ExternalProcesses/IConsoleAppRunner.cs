@@ -11,6 +11,6 @@ namespace BusinessLayerLogic.ExternalProcesses
     {
         //void OpenCommandPrompt();
         string SpleeterArguments(int noOfStems);
-        string RunSpleeter(int noOfStems);
+        Task<string> RunSpleeter(int noOfStems, string originalTrackFilePath);
     }
 }
