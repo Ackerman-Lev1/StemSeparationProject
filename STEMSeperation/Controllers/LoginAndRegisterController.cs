@@ -71,17 +71,19 @@ namespace PresentationLayer.Controllers
             }
             else
             {
-                token = JwtTokenGenerator.GenerateJwtToken(user[0].UserName,_config); 
-                return Ok(new{username=user[0].UserName,JwtToken=token }); 
+                var (storedHash, storedSalt) = await _userService.GetUserPasswordHashAndSaltValue(signInBody.UserName);
+                bool hashVerified = _passwordHasher.VerifyPassword(signInBody.Password, storedSalt, storedHash);
+                if (hashVerified)
+                {
+                    token = JwtTokenGenerator.GenerateJwtToken(user[0].UserName, _config);
+                    return Ok(new { username = user[0].UserName, JwtToken = token });
+                }
+                else {
+                    return NotFound();
+                }
+                //token = JwtTokenGenerator.GenerateJwtToken(user[0].UserName,_config); 
+                //return Ok(new{username=user[0].UserName,JwtToken=token }); 
             }
-        }
-
-        [HttpPost]
-        [Route("CommandCalling")]
-        public string spleetercall(int noOfStems)
-        {
-            var output = _consoleAppRunner.RunSpleeter(noOfStems);
-            return output;
         }
 
     }

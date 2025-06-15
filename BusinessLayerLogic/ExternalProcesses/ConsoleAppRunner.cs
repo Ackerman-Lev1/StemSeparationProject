@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace BusinessLayerLogic.ExternalProcesses
 
         public string SpleeterArguments(int noOfStems)
         {
-            var Argument = string.Empty;
+            string Argument;
             switch (noOfStems)
             {
                 case 2:
@@ -31,11 +32,11 @@ namespace BusinessLayerLogic.ExternalProcesses
             return Argument;
         }
 
-        public string RunSpleeter(int noOfStems)
+        public async Task<string> RunSpleeter(int noOfStems, string originalTrackFilePath)
         {
             string filePath = "C:\\Users\\sukum\\Projects\\K_For_Krishna.mp3";
             string Arguments ="/c" + SpleeterArguments(noOfStems);
-            var startInfo = new ProcessStartInfo("cmd.exe",Arguments + filePath);
+            var startInfo = new ProcessStartInfo("cmd.exe",Arguments + originalTrackFilePath);
             startInfo.RedirectStandardOutput = true;
             startInfo.UseShellExecute = false;
             startInfo.CreateNoWindow = false;

@@ -18,6 +18,7 @@ namespace DatabaseLayerLogic.Repositories
         Task DeleteAsync(int id);
 
         Task<List<User>> GetByUsername(string username); 
+        Task<(string? passwordHash, string? saltValue)> GetUserPasswordHashAndSaltValue(string username);
 
     }
 }
