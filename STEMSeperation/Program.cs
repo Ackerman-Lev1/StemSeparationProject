@@ -20,6 +20,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IConsoleAppRunner, ConsoleAppRunner>();
+builder.Services.AddScoped<IUserFileService, UserFileService>(); 
+builder.Services.AddScoped<IFilesRepository,FilesRepository>(); 
 // Add services to the container.
 
 builder.Services.AddControllers();

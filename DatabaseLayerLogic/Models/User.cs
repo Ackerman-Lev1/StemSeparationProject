@@ -18,4 +18,6 @@ public partial class User
     public DateTime? LastLogIn { get; set; }
 
     public DateTime? LastPasswordChange { get; set; }
+
+    public virtual ICollection<UserFile> UserFiles { get; set; } = new List<UserFile>();
 }
