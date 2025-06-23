@@ -15,6 +15,8 @@ using Azure.Core;
 
 namespace PresentationLayer.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class LoginAndRegisterController : ControllerBase
     {
         private readonly IUserService _userService;

@@ -12,19 +12,22 @@ namespace BusinessLayerLogic.ExternalProcesses
     public class ConsoleAppRunner : IConsoleAppRunner
     {
 
-        public string SpleeterArguments(int noOfStems)
+        public string SpleeterArguments(int noOfStems, string outputPath)
         {
             string Argument;
             switch (noOfStems)
             {
                 case 2:
-                    Argument = "spleeter separate -p spleeter:2stems -o \"C:\\Users\\sukum\\OneDrive\\Documents\" ";
+                    Argument = "spleeter separate -p spleeter:2stems -o " + outputPath;
+                    Console.WriteLine(Argument);
                     break;
                 case 4:
-                    Argument = "spleeter separate -p spleeter:4stems -o \"C:\\Users\\sukum\\OneDrive\\Documents\" ";
+                    Argument = "spleeter separate -p spleeter:4stems -o " + outputPath;
+                    Console.WriteLine(Argument);
                     break;
                 case 5:
-                    Argument = "spleeter separate -p spleeter:5stems -o \"C:\\Users\\sukum\\OneDrive\\Documents\" ";
+                    Argument = "spleeter separate -p spleeter:5stems -o " + outputPath;
+                    Console.WriteLine(Argument);
                     break;
                 default:
                     return "INVALID SELECTION";
@@ -32,12 +35,11 @@ namespace BusinessLayerLogic.ExternalProcesses
             return Argument;
         }
 
-        public async Task<string> RunSpleeter(int noOfStems, string originalTrackFilePath)
+        public async Task<string> RunSpleeter(int noOfStems, string originalTrackFilePath, string trackFilePath)
         {
-            string filePath = "C:\\Users\\sukum\\Projects\\K_For_Krishna.mp3";
-            string Arguments ="/c" + SpleeterArguments(noOfStems);
-            var startInfo = new ProcessStartInfo("cmd.exe",Arguments + originalTrackFilePath);
-            startInfo.RedirectStandardOutput = true;
+            string Arguments ="/c" + SpleeterArguments(noOfStems, originalTrackFilePath);
+            var startInfo = new ProcessStartInfo("cmd.exe",Arguments +" " + trackFilePath);
+            startInfo.RedirectStandardOutput = true; 
             startInfo.UseShellExecute = false;
             startInfo.CreateNoWindow = false;
 

@@ -23,37 +23,98 @@ namespace PresentationLayer.Controllers
             _userService = userService;
             _userFileService = userFileService; 
         }
+
+        [HttpGet("GetUserFiles")]
+        public async Task<ActionResult> GetUserFiles()
+        {
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+
+            if (string.IsNullOrEmpty(userName))
+            {
+                return BadRequest("User name is not available in the claims.");
+            }
+
+            var userFiles = await _userFileService.GetUserFiles(userName);
+            if (userFiles == null || !userFiles.Any())
+            {
+                return NotFound("No files found for the user.");
+            }
+            return Ok(userFiles);
+        }
+
         [HttpPost("UploadAudio")]
         [Consumes("multipart/form-data")]
         public async Task<ActionResult> InsertFileAndCallSpleeter(MediaFileVM mediaFileVM)
         {
             //TBD : Refactor the code 
-            var userName= User.FindFirst(ClaimTypes.Name)?.Value; 
-            string extension = Path.GetExtension(mediaFileVM.mediaFile.FileName).ToLowerInvariant();
-            List<string> AllowedFileExtensions = new (){".mp3", ".wav", ".flac", ".ogg", ".m4a", ".aac"};
-            if (!AllowedFileExtensions.Contains(extension))
+            var userName= User.FindFirst(ClaimTypes.Name)?.Value;
+
+            if (string.IsNullOrEmpty(userName))
             {
-                return BadRequest("The extension of the file is not supported. Please upload a valid audio file.");
+                return BadRequest("User name is not available in the claims.");
             }
-            string InstanceFolderPath=Guid.NewGuid().ToString()+extension;
-            string StoragePath = Path.Combine(Directory.GetCurrentDirectory(), "UploadedFiles", InstanceFolderPath);
-            if (!Directory.Exists(StoragePath))
+
+            var userFolder = await _userFileService.GetFolderByUsername(userName);
+
+            if(userFolder == null)
             {
-                Directory.CreateDirectory(StoragePath);
+                string extension = Path.GetExtension(mediaFileVM.mediaFile.FileName).ToLowerInvariant();
+                List<string> AllowedFileExtensions = new() { ".mp3", ".wav", ".flac", ".ogg", ".m4a", ".aac" };
+                if (!AllowedFileExtensions.Contains(extension))
+                {
+                    return BadRequest("The extension of the file is not supported. Please upload a valid audio file.");
+                }
+                string InstanceFolderPath = Guid.NewGuid().ToString() + extension;
+                string StoragePath = Path.Combine(Directory.GetCurrentDirectory(), "UploadedFiles", InstanceFolderPath);
+                if (!Directory.Exists(StoragePath))
+                {
+                    Directory.CreateDirectory(StoragePath);
+                }
+                FileStream stream = new FileStream(Path.Combine(StoragePath, mediaFileVM.mediaFile.FileName), FileMode.Create);
+                await mediaFileVM.mediaFile.CopyToAsync(stream);
+                stream.Close();
+                string filePath = Path.Combine(StoragePath, mediaFileVM.mediaFile.FileName);
+                var fileExecutionResult = await _consoleAppRunner.RunSpleeter(mediaFileVM.noOfStems, StoragePath, filePath);
+                var user = await _userService.GetUserByUsername(userName);
+                await _userFileService.AddFilesAsync(mediaFileVM.noOfStems, StoragePath, user[0].Pkuser, mediaFileVM.mediaFile.FileName);
+                string folderInfo = "FOLDER FOR THIS USER DOES NOT EXIST SO CREATED ONE: " + StoragePath.ToString();
+                return Ok(new
+                {
+                    folderInfo,
+                    fileExecutionResult,
+                    Message = "File uploaded successfully.",
+                    FilePath = filePath,
+                    NoOfStems = mediaFileVM.noOfStems
+                });
             }
-            FileStream stream = new FileStream(Path.Combine(StoragePath, mediaFileVM.mediaFile.FileName), FileMode.Create);
-            await mediaFileVM.mediaFile.CopyToAsync(stream);
-            stream.Close();
-            string filePath=Path.Combine(StoragePath, mediaFileVM.mediaFile.FileName);
-            var fileExecutionResult = await _consoleAppRunner.RunSpleeter(mediaFileVM.noOfStems, StoragePath);
-            var user=await _userService.GetUserByUsername(userName); 
-            await _userFileService.AddFilesAsync(mediaFileVM.noOfStems, StoragePath, user[0].Pkuser, mediaFileVM.mediaFile.FileName); 
-            return Ok(new
+            else
             {
-                Message = "File uploaded successfully.",
-                FilePath = filePath,
-                NoOfStems = mediaFileVM.noOfStems
-            });
+
+                string extension = Path.GetExtension(mediaFileVM.mediaFile.FileName).ToLowerInvariant();
+                List<string> AllowedFileExtensions = new() { ".mp3", ".wav", ".flac", ".ogg", ".m4a", ".aac" };
+                if (!AllowedFileExtensions.Contains(extension))
+                {
+                    return BadRequest("The extension of the file is not supported. Please upload a valid audio file.");
+                }
+                string folderInfo = "FOLDER FOR THIS USER ALREADY EXISTS: " + userFolder;
+                string StoragePath = userFolder;
+                FileStream stream = new FileStream(Path.Combine(StoragePath, mediaFileVM.mediaFile.FileName), FileMode.Create);
+                await mediaFileVM.mediaFile.CopyToAsync(stream);
+                stream.Close();
+                string filePath = Path.Combine(StoragePath, mediaFileVM.mediaFile.FileName);
+                var fileExecutionResult = await _consoleAppRunner.RunSpleeter(mediaFileVM.noOfStems, StoragePath, filePath);
+                var user = await _userService.GetUserByUsername(userName);
+                await _userFileService.AddFilesAsync(mediaFileVM.noOfStems, StoragePath, user[0].Pkuser, mediaFileVM.mediaFile.FileName);
+                return Ok(new
+                {
+                    folderInfo,
+                    fileExecutionResult,
+                    Message = "File uploaded successfully.",
+                    FilePath = filePath,
+                    NoOfStems = mediaFileVM.noOfStems
+                });
+
+            }
 
         }
 

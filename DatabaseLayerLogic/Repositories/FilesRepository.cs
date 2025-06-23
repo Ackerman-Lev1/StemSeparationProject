@@ -1,9 +1,11 @@
+using DatabaseLayerLogic.Models;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DatabaseLayerLogic.Models;
-using Microsoft.AspNetCore.Mvc;
 
 namespace DatabaseLayerLogic.Repositories
 {
@@ -13,6 +15,18 @@ namespace DatabaseLayerLogic.Repositories
         public FilesRepository(StemseperationContext context)
         {
             _context = context;
+        }
+
+        public async Task<List<UserFile>> GetUserFiles(string userName)
+        {
+            var userId = await _context.Users
+                .Where(u => u.UserName == userName)
+                .Select(u => u.Pkuser)
+                .FirstOrDefaultAsync();
+
+            return await _context.UserFiles
+                .Where(file => file.UserId == userId)
+                .ToListAsync();
         }
         public async Task AddUserFiles(int noOfStems, string originalTrackFilePath, int userId,string fileName)
         {
@@ -65,6 +79,21 @@ namespace DatabaseLayerLogic.Repositories
                 userFile
             );
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<string> GetFolderByUsername(string userName)
+        {
+            var userId = await _context.Users
+                .Where(u => u.UserName == userName)
+                .Select(u => u.Pkuser)
+                .FirstOrDefaultAsync();
+
+            var folderPath = await _context.UserFiles
+                .Where(folderpath => folderpath.UserId == userId)
+                .Select(folderpath => folderpath.InputPath)
+                .FirstOrDefaultAsync();
+
+            return folderPath ?? string.Empty;
         }
     }
 }
