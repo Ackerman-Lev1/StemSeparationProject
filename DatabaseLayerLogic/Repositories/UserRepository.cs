@@ -59,10 +59,10 @@ namespace DatabaseLayerLogic.Repositories
             return user; 
         }
 
-        public async Task<(string passwordHash, string saltValue)> GetUserPasswordHashAndSaltValue(string userName)
+        public async Task<(string? passwordHash, string? saltValue)> GetUserPasswordHashAndSaltValue(string userName)
         {
             var result = await _context.Users
-                .Where (u => u.UserName == userName)
+                .Where(u => u.UserName == userName)
                 .Select(u => new { u.PasswordHash, u.SaltValue })
                 .FirstOrDefaultAsync();
 

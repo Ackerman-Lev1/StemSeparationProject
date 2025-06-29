@@ -36,22 +36,27 @@ namespace BusinessLayerLogic.ExternalProcesses
         }
 
         public async Task<string> RunSpleeter(int noOfStems, string originalTrackFilePath, string trackFilePath)
-        {
-            string Arguments ="/c" + SpleeterArguments(noOfStems, originalTrackFilePath);
-            var startInfo = new ProcessStartInfo("cmd.exe",Arguments +" " + trackFilePath);
-            startInfo.RedirectStandardOutput = true; 
+        {   
+            string Arguments = "/c" + SpleeterArguments(noOfStems, originalTrackFilePath);
+            var startInfo = new ProcessStartInfo("cmd.exe", Arguments + " " + trackFilePath);
+            startInfo.RedirectStandardOutput = true;
             startInfo.UseShellExecute = false;
             startInfo.CreateNoWindow = false;
 
             using (var process = Process.Start(startInfo))
             {
+                if (process == null)
+                {
+                    throw new InvalidOperationException("Failed to start the process.");
+                }
+
                 var standardOutput = new StringBuilder();
                 while (!process.HasExited)
                 {
-                    standardOutput.Append(process.StandardOutput.ReadToEnd());
+                    standardOutput.Append(await process.StandardOutput.ReadToEndAsync());
                 }
 
-                standardOutput.Append(process.StandardOutput.ReadToEnd());
+                standardOutput.Append(await process.StandardOutput.ReadToEndAsync());
 
                 return standardOutput.ToString();
             }
