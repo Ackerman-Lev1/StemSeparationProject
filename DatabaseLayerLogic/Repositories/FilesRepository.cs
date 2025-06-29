@@ -28,7 +28,7 @@ namespace DatabaseLayerLogic.Repositories
                 .Where(file => file.UserId == userId)
                 .ToListAsync();
         }
-        public async Task AddUserFiles(int noOfStems, string originalTrackFilePath, int userId,string fileName)
+        public async Task AddUserFiles(int noOfStems, string originalTrackFilePath, int userId,string filePath)
         {
             UserFile userFile; 
             switch (noOfStems)
@@ -39,8 +39,8 @@ namespace DatabaseLayerLogic.Repositories
                         UserId = userId,
                         InputPath = originalTrackFilePath,
                         InstanceTime = DateTime.Now,
-                        Stem1 = Path.Combine(originalTrackFilePath,fileName,"vocals.wav"),
-                        Stem2 = Path.Combine(originalTrackFilePath,fileName,"accompaniment.wav"),
+                        Stem1 = Path.Combine(filePath,"vocals.wav"),
+                        Stem2 = Path.Combine(filePath,"accompaniment.wav"),
                         Stem3 = null,
                         Stem4=null,
                         Stem5=null
@@ -52,10 +52,10 @@ namespace DatabaseLayerLogic.Repositories
                         UserId = userId,
                         InputPath = originalTrackFilePath,
                         InstanceTime = DateTime.Now,
-                        Stem1 = Path.Combine(originalTrackFilePath,fileName,"vocals.wav"),
-                        Stem2 = Path.Combine(originalTrackFilePath,fileName,"drums.wav"),
-                        Stem3 = Path.Combine(originalTrackFilePath,fileName,"bass.wav"),
-                        Stem4 =  Path.Combine(originalTrackFilePath,fileName,"other.wav"),
+                        Stem1 = Path.Combine(filePath,"vocals.wav"),
+                        Stem2 = Path.Combine(filePath,"drums.wav"),
+                        Stem3 = Path.Combine(filePath,"bass.wav"),
+                        Stem4 =  Path.Combine(filePath,"other.wav"),
                         Stem5=null
                     }; 
                     break;
@@ -65,11 +65,11 @@ namespace DatabaseLayerLogic.Repositories
                         UserId = userId,
                         InputPath = originalTrackFilePath,
                         InstanceTime = DateTime.Now,
-                        Stem1 = Path.Combine(originalTrackFilePath,fileName,"vocals.wav"),
-                        Stem2 = Path.Combine(originalTrackFilePath,fileName,"drums.wav"),
-                        Stem3 = Path.Combine(originalTrackFilePath,fileName,"bass.wav"),
-                        Stem4 = Path.Combine(originalTrackFilePath,fileName,"other.wav"),
-                        Stem5 = Path.Combine(originalTrackFilePath,fileName,"piano.wav")
+                        Stem1 = Path.Combine(filePath,"vocals.wav"),
+                        Stem2 = Path.Combine(filePath,"drums.wav"),
+                        Stem3 = Path.Combine(filePath,"bass.wav"),
+                        Stem4 = Path.Combine(filePath,"other.wav"),
+                        Stem5 = Path.Combine(filePath,"piano.wav")
                     };
                     break;
                 default:
