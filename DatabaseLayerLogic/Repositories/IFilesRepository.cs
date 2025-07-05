@@ -10,7 +10,7 @@ namespace DatabaseLayerLogic.Repositories
     public interface IFilesRepository
     {
         Task<List<UserFile>> GetUserFiles(string userName);
-        Task AddUserFiles(int noOfStems, string originalTrackFilePath, int userId,string fileName);
+        Task<UserFile> AddUserFiles(int noOfStems, string originalTrackFilePath, int userId,string fileName);
         Task<string> GetFolderByUsername(string userName);
     }
 }

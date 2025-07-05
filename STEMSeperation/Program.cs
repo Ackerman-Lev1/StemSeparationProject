@@ -10,9 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
-
-//// Add services to the container.
-//builder.Services.AddControllersWithViews();
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins"; 
 builder.Services.AddDbContext<StemseperationContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")
 ));
@@ -21,9 +19,20 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IConsoleAppRunner, ConsoleAppRunner>();
 builder.Services.AddScoped<IUserFileService, UserFileService>(); 
-builder.Services.AddScoped<IFilesRepository,FilesRepository>(); 
+builder.Services.AddScoped<IFilesRepository,FilesRepository>();
 // Add services to the container.
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            // policy.WithOrigins("http://localhost:3000");
+            policy.AllowAnyOrigin(); 
+            policy.AllowAnyHeader(); 
+        }
+    ); 
+}
+); 
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -74,11 +83,9 @@ app.UseSwaggerUI(c =>
 //app.UseStaticFiles();
 
 app.UseRouting();
+app.UseCors(MyAllowSpecificOrigins); 
 app.UseAuthentication(); 
 app.UseAuthorization();
 app.MapControllers();
-//app.MapControllerRoute(
-//    name: "default",
-//    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
