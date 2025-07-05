@@ -9,7 +9,7 @@ namespace BusinessLayerLogic.Services.Contracts
     public interface IUserFileService
     {
         Task<List<UserFile>> GetUserFiles(string userName);
-        Task AddFilesAsync(int noOfStems, string originalTrackFilePath, int userId, string fileName);
+        Task<UserFile> AddFilesAsync(int noOfStems, string originalTrackFilePath, int userId, string fileName);
         Task<string> GetFolderByUsername(string userName);
     }
 }
