@@ -165,13 +165,18 @@ namespace PresentationLayer.Controllers
             string fileNameWithoutExtension = Path.Combine(StoragePath, Path.GetFileNameWithoutExtension(mediaFileVM.mediaFile.FileName));
             Console.WriteLine("File Path for saving in DB: " + fileNameWithoutExtension);
             var user = await _userService.GetUserByUsername(userName);
-            await _userFileService.AddFilesAsync(mediaFileVM.noOfStems, StoragePath, user[0].Pkuser, fileNameWithoutExtension);
+            var UserFile = await _userFileService.AddFilesAsync(mediaFileVM.noOfStems, StoragePath, user[0].Pkuser, fileNameWithoutExtension);
             return Ok(new
             {
-                fileExecutionResult,
+                // fileExecutionResult,
                 Message = "File uploaded successfully.",
                 FilePath = filePath,
-                NoOfStems = mediaFileVM.noOfStems
+                NoOfStems = mediaFileVM.noOfStems,
+                Stem1 = UserFile.Stem1,
+                Stem2 = UserFile.Stem2,
+                Stem3 = UserFile.Stem3,
+                Stem4 = UserFile.Stem4, 
+                Stem5 = UserFile.Stem5
             });
 
         }

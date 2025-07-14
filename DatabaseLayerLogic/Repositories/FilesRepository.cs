@@ -28,48 +28,48 @@ namespace DatabaseLayerLogic.Repositories
                 .Where(file => file.UserId == userId)
                 .ToListAsync();
         }
-        public async Task AddUserFiles(int noOfStems, string originalTrackFilePath, int userId,string filePath)
+        public async Task<UserFile> AddUserFiles(int noOfStems, string originalTrackFilePath, int userId, string filePath)
         {
-            UserFile userFile; 
+            UserFile userFile;
             switch (noOfStems)
             {
                 case 2:
-                    userFile=new UserFile()
+                    userFile = new UserFile()
                     {
                         UserId = userId,
                         InputPath = originalTrackFilePath,
                         InstanceTime = DateTime.Now,
-                        Stem1 = Path.Combine(filePath,"vocals.wav"),
-                        Stem2 = Path.Combine(filePath,"accompaniment.wav"),
+                        Stem1 = Path.Combine(filePath, "vocals.wav"),
+                        Stem2 = Path.Combine(filePath, "accompaniment.wav"),
                         Stem3 = null,
-                        Stem4=null,
-                        Stem5=null
-                    }; 
+                        Stem4 = null,
+                        Stem5 = null
+                    };
                     break;
                 case 4:
-                    userFile=new UserFile()
+                    userFile = new UserFile()
                     {
                         UserId = userId,
                         InputPath = originalTrackFilePath,
                         InstanceTime = DateTime.Now,
-                        Stem1 = Path.Combine(filePath,"vocals.wav"),
-                        Stem2 = Path.Combine(filePath,"drums.wav"),
-                        Stem3 = Path.Combine(filePath,"bass.wav"),
-                        Stem4 =  Path.Combine(filePath,"other.wav"),
-                        Stem5=null
-                    }; 
+                        Stem1 = Path.Combine(filePath, "vocals.wav"),
+                        Stem2 = Path.Combine(filePath, "drums.wav"),
+                        Stem3 = Path.Combine(filePath, "bass.wav"),
+                        Stem4 = Path.Combine(filePath, "other.wav"),
+                        Stem5 = null
+                    };
                     break;
                 case 5:
-                    userFile=new UserFile()
+                    userFile = new UserFile()
                     {
                         UserId = userId,
                         InputPath = originalTrackFilePath,
                         InstanceTime = DateTime.Now,
-                        Stem1 = Path.Combine(filePath,"vocals.wav"),
-                        Stem2 = Path.Combine(filePath,"drums.wav"),
-                        Stem3 = Path.Combine(filePath,"bass.wav"),
-                        Stem4 = Path.Combine(filePath,"other.wav"),
-                        Stem5 = Path.Combine(filePath,"piano.wav")
+                        Stem1 = Path.Combine(filePath, "vocals.wav"),
+                        Stem2 = Path.Combine(filePath, "drums.wav"),
+                        Stem3 = Path.Combine(filePath, "bass.wav"),
+                        Stem4 = Path.Combine(filePath, "other.wav"),
+                        Stem5 = Path.Combine(filePath, "piano.wav")
                     };
                     break;
                 default:
@@ -79,6 +79,7 @@ namespace DatabaseLayerLogic.Repositories
                 userFile
             );
             await _context.SaveChangesAsync();
+            return userFile; 
         }
 
         public async Task<string> GetFolderByUsername(string userName)

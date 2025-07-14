@@ -17,9 +17,10 @@ namespace BusinessLayerLogic.Services
         }
         public async Task<List<UserFile>> GetUserFiles(string userName) => 
             await _filesRepository.GetUserFiles(userName);
-        public async Task AddFilesAsync(int noOfStems, string originalTrackFilePath, int userId, string fileName)
+        public async Task<UserFile> AddFilesAsync(int noOfStems, string originalTrackFilePath, int userId, string fileName)
         {
-           await _filesRepository.AddUserFiles(noOfStems, originalTrackFilePath, userId, fileName); 
+            UserFile userFile = await _filesRepository.AddUserFiles(noOfStems, originalTrackFilePath, userId, fileName); 
+            return userFile; 
         }
 
         public async Task<string> GetFolderByUsername(string userName) =>
