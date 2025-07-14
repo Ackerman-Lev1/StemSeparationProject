@@ -41,7 +41,33 @@ namespace PresentationLayer.Controllers
             {
                 return NotFound("No files found for the user.");
             }
-            return Ok(userFiles);
+
+            var baseUrl = $"{Request.Scheme}://{Request.Host}";
+
+            var result = userFiles.Select(f => new
+            {
+                f.InstanceId,
+                f.InstanceTime,
+                Stem1Url = GetPublicUrl(f.Stem1, baseUrl),
+                Stem2Url = GetPublicUrl(f.Stem2, baseUrl),
+                Stem3Url = GetPublicUrl(f.Stem3, baseUrl),
+                Stem4Url = GetPublicUrl(f.Stem4, baseUrl),
+                Stem5Url = GetPublicUrl(f.Stem5, baseUrl)
+            });
+
+            return Ok(result);
+        }
+
+        private string? GetPublicUrl(string? fullPath, string baseUrl)
+        {
+            if (string.IsNullOrWhiteSpace(fullPath))
+                return null;
+
+            var wwwRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var relativePath = Path.GetRelativePath(wwwRoot, fullPath)
+                                   .Replace("\\", "/"); 
+
+            return $"{baseUrl}/{relativePath}";
         }
 
         [HttpGet("DownloadUserFiles")]
