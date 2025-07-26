@@ -20,7 +20,7 @@ public partial class StemseperationContext : DbContext
     public virtual DbSet<UserFile> UserFiles { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Server=localhost,1433;Initial Catalog=STEMSeperation;User ID=sa;Password=Karthik123;Encrypt=False;TrustServerCertificate=True");
+        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-1CFLAAS\\SQLEXPRESS;Initial Catalog=STEMSeperation;Integrated Security=True;Pooling=False;Encrypt=False;Trust Server Certificate=True");
     //Server=DESKTOP-1CFLAAS\\SQLEXPRESS;Database=STEMSeperation;Encrypt=False;TrustServerCertificate=True;Trusted_Connection=True;
     // Server=localhost,1433;Initial Catalog=STEMSeperation;User ID=sa;Password=Karthik123;Encrypt=False;TrustServerCertificate=True
     protected override void OnModelCreating(ModelBuilder modelBuilder)

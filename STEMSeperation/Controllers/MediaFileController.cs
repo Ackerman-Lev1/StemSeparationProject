@@ -87,7 +87,7 @@ namespace PresentationLayer.Controllers
 
             using var memoryStream = new MemoryStream();
             using (var zip = new System.IO.Compression.ZipArchive(memoryStream, System.IO.Compression.ZipArchiveMode.Create, true))
-            {
+            {   
                 foreach (var filePath in userFiles.SelectMany(f => new[] { f.Stem1, f.Stem2, f.Stem3, f.Stem4, f.Stem5  }))
                 {
                     if (System.IO.File.Exists(filePath))
