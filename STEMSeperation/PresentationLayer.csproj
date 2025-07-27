@@ -26,4 +26,8 @@
     <ProjectReference Include="..\DatabaseLayerLogic\DatabaseLayerLogic.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\UploadedFiles\" />
+  </ItemGroup>
+
 </Project>

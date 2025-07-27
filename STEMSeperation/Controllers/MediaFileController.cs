@@ -17,13 +17,14 @@ namespace PresentationLayer.Controllers
     {
         private readonly IConsoleAppRunner _consoleAppRunner;
         private readonly IUserService _userService;
-
+        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IUserFileService _userFileService;
-        public MediaFileController(IConsoleAppRunner consoleAppRunner, IUserService userService, IUserFileService userFileService)
+        public MediaFileController(IConsoleAppRunner consoleAppRunner, IUserService userService, IUserFileService userFileService, IWebHostEnvironment webHostEnvironment)
         {
             _consoleAppRunner = consoleAppRunner;
             _userService = userService;
-            _userFileService = userFileService; 
+            _userFileService = userFileService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpGet("GetUserFiles")]
@@ -141,7 +142,7 @@ namespace PresentationLayer.Controllers
             //Creating a unique folder for the user to store the uploaded file and processed files
 
             string InstanceFolderPath = Guid.NewGuid().ToString();// + extension;
-            string StoragePath = Path.Combine(Directory.GetCurrentDirectory(), "UploadedFiles", InstanceFolderPath);
+            string StoragePath = Path.Combine(_webHostEnvironment.WebRootPath, "UploadedFiles", InstanceFolderPath);
             Console.WriteLine("Storage Path: "+StoragePath);
             if (!Directory.Exists(StoragePath))
             {
