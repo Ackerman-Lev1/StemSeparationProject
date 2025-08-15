@@ -47,7 +47,10 @@ namespace PresentationLayer.Controllers
                 UserName = registerAndLoginVM.UserName,
                 PasswordHash = hash,
                 SaltValue = salt,
-                UserCreatedOn = DateTime.Now
+                UserCreatedOn = DateTime.Now,
+                Email = registerAndLoginVM.Email,
+                FirstName = registerAndLoginVM.FirstName, 
+                LastName = registerAndLoginVM.LastName, 
             };
             try
             {
