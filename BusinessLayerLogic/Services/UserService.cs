@@ -36,5 +36,7 @@ namespace BusinessLayerLogic.Services
             await _userRepository.GetByUsername(username);
         public async Task<(string? passwordHash, string? saltValue)> GetUserPasswordHashAndSaltValue(string username) =>
             await _userRepository.GetUserPasswordHashAndSaltValue(username);
+        public async Task<User> GetOrCreateGoogleUserAsync(string email, string? firstName, string? lastName)
+            => await _userRepository.GetOrCreateGoogleUserAsync(email, firstName, lastName);
     }
 }

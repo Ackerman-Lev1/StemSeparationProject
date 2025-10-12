@@ -11,7 +11,13 @@ using Azure.Identity;
 using BusinessLayerLogic.Services.Contracts;
 using DatabaseLayerLogic.Security;
 using Azure.Core;
-
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using Google.Apis.Auth;
 
 namespace PresentationLayer.Controllers
 {
@@ -33,7 +39,7 @@ namespace PresentationLayer.Controllers
 
         [HttpPost]
         [Route("SignUp")]
-        public async Task<ActionResult<User>> Register([FromBody] RegisterAndLoginVM registerAndLoginVM)
+        public async Task<ActionResult<User>> Register([FromBody] RegisterVM registerAndLoginVM)
         {
             var IsExist = await _userService.GetUserByUsername(registerAndLoginVM.UserName);
             if (IsExist.Count!=0)
@@ -66,7 +72,7 @@ namespace PresentationLayer.Controllers
 
         [HttpPost]
         [Route("SignIn")]
-        public async Task<ActionResult<User>> SignIn([FromBody] RegisterAndLoginVM signInBody)
+        public async Task<ActionResult<User>> SignIn([FromBody] LoginVM signInBody)
         {
             string token = ""; 
             var user = await _userService.GetUserByUsername(signInBody.UserName);
@@ -89,6 +95,41 @@ namespace PresentationLayer.Controllers
                 //token = JwtTokenGenerator.GenerateJwtToken(user[0].UserName,_config); 
                 //return Ok(new{username=user[0].UserName,JwtToken=token }); 
             }
+        }
+
+
+        [HttpPost("GoogleSignIn")]
+        public async Task<IActionResult> GoogleSignIn([FromBody] GoogleSignInRequest request)
+        {
+            try
+            {
+                // Verify the Google ID token sent from React
+                var payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken);
+
+                string email = payload.Email;
+                string name = payload.Name;
+
+                // Use the new service method to get or create the user
+                var user = await _userService.GetOrCreateGoogleUserAsync(
+                    email,
+                    name?.Split(' ').FirstOrDefault(),
+                    name?.Split(' ').Skip(1).FirstOrDefault() ?? ""
+                );
+
+                // Generate JWT token
+                var token = JwtTokenGenerator.GenerateJwtToken(email, _config);
+
+                return Ok(new { JwtToken = token, Email = email });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = "Google token verification failed", Error = ex.Message });
+            }
+        }
+
+        public class GoogleSignInRequest
+        {
+            public string IdToken { get; set; }
         }
 
     }

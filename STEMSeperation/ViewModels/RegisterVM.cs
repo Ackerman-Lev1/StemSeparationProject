@@ -1,6 +1,6 @@
 ﻿namespace PresentationLayer.ViewModels
 {
-    public class RegisterAndLoginVM
+    public class RegisterVM
     {
         public string UserName { get; set; } = null!;
 

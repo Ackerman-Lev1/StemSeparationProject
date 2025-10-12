@@ -19,6 +19,6 @@ namespace DatabaseLayerLogic.Repositories
 
         Task<List<User>> GetByUsername(string username); 
         Task<(string? passwordHash, string? saltValue)> GetUserPasswordHashAndSaltValue(string username);
-
+        Task<User> GetOrCreateGoogleUserAsync(string email, string? firstName, string? lastName);
     }
 }

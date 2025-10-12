@@ -68,5 +68,30 @@ namespace DatabaseLayerLogic.Repositories
 
             return (result?.PasswordHash, result?.SaltValue);
         }
+
+        public async Task<User> GetOrCreateGoogleUserAsync(string email, string? firstName, string? lastName)
+        {
+            var users = await GetByUsername(email);
+            if (users.Count > 0)
+            {
+                return users[0];
+            }
+
+            var newUser = new User
+            {
+                UserName = email,
+                Email = email,
+                FirstName = firstName,
+                LastName = lastName,
+                UserCreatedOn = DateTime.Now,
+                PasswordHash = "",
+                SaltValue = ""
+            };
+
+            await _context.Users.AddAsync(newUser);
+            await _context.SaveChangesAsync();
+
+            return newUser;
+        }
     }
 }
