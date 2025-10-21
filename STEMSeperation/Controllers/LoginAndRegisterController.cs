@@ -105,7 +105,7 @@ namespace PresentationLayer.Controllers
             {
                 // Verify the Google ID token sent from React
                 var payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken);
-
+                Console.Write("Endpoint hit"); 
                 string email = payload.Email;
                 string name = payload.Name;
 
@@ -119,7 +119,7 @@ namespace PresentationLayer.Controllers
                 // Generate JWT token
                 var token = JwtTokenGenerator.GenerateJwtToken(email, _config);
 
-                return Ok(new { JwtToken = token, Email = email });
+                return Ok(new { JwtToken = token, Email = email, userName=name});
             }
             catch (Exception ex)
             {
